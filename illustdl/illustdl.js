@@ -73,9 +73,6 @@ class IllustDownloader {
         window.addEventListener('pushState', () => { 
             this.setupPage()
         })
-        window.addEventListener('load', () => {
-            this.setupPage()
-        })
 
         let adapter = this.adapter
         let connection = adapter.createBackgroundConnection()
@@ -97,6 +94,8 @@ class IllustDownloader {
 
         let observer = new MutationObserver(list => this.observerUpdate(list))
         observer.observe(document, { childList: true, subtree: true })
+        
+        this.setupPage()
     }
 
     setupPage() {
