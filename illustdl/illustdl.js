@@ -191,7 +191,6 @@ class IllustDownloader {
             }
             else {
                 this.downloadInfoTxt(info)
-                this.finishDownload(info)
             }
         }, () => {
             if (candidateIndex < list[page].length - 1) {
@@ -212,7 +211,10 @@ class IllustDownloader {
         txt.push('Description: ' + info.description)
         txt.push('Tags: ' + info.tags.join(', '))
         this.adapter.appendInfoFile(info, txt)
-        downloader.triggerString(txt.join('\r\n'), this.createFilename(info, 'Info', 'txt'))
+        downloader.triggerString(txt.join('\r\n'), this.createFilename(info, 'Info', 'txt'), () => {
+            this.adapter.log('Downloaded info file')
+            this.finishDownload(info)
+        })
     }
 
     finishDownload(info) {
