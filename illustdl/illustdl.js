@@ -60,6 +60,8 @@ class IllustPageAdapter {
 
     appendInfoFile(info, txt) { }
 
+    downloading() { }
+
     downloaded() { }
 }
 
@@ -67,11 +69,18 @@ class IllustDownloader {
     constructor(adapter) {
         this.adapter = adapter
         this.links = []
+        this.isDownloading = false
     }
 
     init() {
         window.addEventListener('pushState', () => { 
             this.setupPage()
+        })
+        window.addEventListener('beforeunload', (ev) => {
+            if (this.isDownloading) {
+                ev.preventDefault()
+                return ''
+            }
         })
 
         let adapter = this.adapter
@@ -156,6 +165,8 @@ class IllustDownloader {
         adapter.log(this.createFilename(info, info.numberOfPages, ''))
         adapter.log(`Description length: ${info.description.length}`)
 
+        this.isDownloading = true
+        adapter.downloading()
         adapter.getIllustDownloadsAsync(info).then(list => {
             this.downloadOneInIllust(info, list, 0, 0)
         })
@@ -220,6 +231,7 @@ class IllustDownloader {
     finishDownload(info) {
         this.adapter.addIllustDownloaded(info.id)
         this.adapter.downloaded()
+        this.isDownloading = false
     }
 
     createFilename(info, page, ext) {
