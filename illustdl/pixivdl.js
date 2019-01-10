@@ -123,7 +123,7 @@ class PixivPageAdapter extends IllustPageAdapter {
         let id = this.getIdFromHref(window.location)
         let nameElem = document.querySelector('figcaption h1')
         let name = nameElem !== null ? nameElem.innerText : '無題'
-        let authorElem = document.querySelector('aside>section>div>div>a')
+        let authorElem = document.querySelector('aside>section>h2>div>a')
         let authorId = Number(authorElem.href.match(/member.php\?id=(\d+)/)[1])
         let author = authorElem.innerText
 
