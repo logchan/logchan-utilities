@@ -63,11 +63,18 @@ class IllustPageAdapter {
     downloading() { }
 
     downloaded() { }
+
+    nodeAdded(node) { }
+
+    nodeRemoved(node) { }
+
+    nodeAttributeChanged(node, record) { }
 }
 
 class IllustDownloader {
     constructor(adapter) {
         this.adapter = adapter
+        this.adapter.illustdl = this
         this.links = []
         this.isDownloading = false
     }
@@ -102,7 +109,7 @@ class IllustDownloader {
         }
 
         let observer = new MutationObserver(list => this.observerUpdate(list))
-        observer.observe(document, { childList: true, subtree: true })
+        observer.observe(document, { attributes: true, attributeOldValue: true, childList: true, subtree: true })
         
         this.setupPage()
     }
@@ -116,10 +123,15 @@ class IllustDownloader {
         list.forEach(mutation => {
             mutation.addedNodes.forEach(node => {
                 this.processNodeChange(node, true)
+                this.adapter.nodeAdded(node)
             })
             mutation.removedNodes.forEach(node => {
                 this.processNodeChange(node, false)
+                this.adapter.nodeRemoved(node)
             })
+            if (mutation.type === 'attributes') {
+                this.adapter.nodeAttributeChanged(mutation.target, mutation)
+            }
         })
     }
 

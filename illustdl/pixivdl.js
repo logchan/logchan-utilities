@@ -230,6 +230,28 @@ class PixivPageAdapter extends IllustPageAdapter {
         
         return wrapper
     }
+
+    nodeRemoved(node) {
+        if (node.id === 'pixivDlLog') {
+            // this.log('pixivDlLog is removed, setup page...')
+            this.illustdl.setupPage()
+        }
+
+        node.childNodes.forEach(child => {
+            this.nodeRemoved(child)
+        })
+    }
+
+    nodeAttributeChanged(node, record) {
+        if (record.attributeName !== 'class') {
+            return
+        }
+
+        if (record.oldValue.indexOf('pixiv-dl-downloaded') >= 0
+            && node.className.indexOf('pixiv-dl-downloaded') < 0) {
+            node.className += ' pixiv-dl-downloaded'
+        }
+    }
 }
 
 let pixivIllustDownloader = new IllustDownloader(new PixivPageAdapter())
