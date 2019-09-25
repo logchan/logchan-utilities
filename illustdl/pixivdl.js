@@ -57,7 +57,7 @@ class PixivPageAdapter extends IllustPageAdapter {
             return
         }
 
-        if (window.location.href.indexOf('member_illust.php?mode=medium') >= 0) {
+        if (this.isIllustPage()) {
             this.appendLogBox('aside > section')
         }
         else if (window.location.href.indexOf('bookmark_new_illust.php') >= 0) {
@@ -65,8 +65,12 @@ class PixivPageAdapter extends IllustPageAdapter {
         }
     }
 
+    isIllustPage(url = window.location.href) {
+        return url.indexOf('/artworks/') >= 0
+    }
+
     getIllustId() {
-        if (window.location.href.indexOf('member_illust.php?mode=medium') < 0) {
+        if (!this.isIllustPage()) {
             return null
         }
 
@@ -90,7 +94,7 @@ class PixivPageAdapter extends IllustPageAdapter {
     }
 
     createIllustLink(node) { 
-        if (node.href.indexOf('member_illust.php?mode=medium') < 0) {
+        if (!this.isIllustPage(node.href)) {
             return null
         }
         return new IllustLinkInfo(this.getIdFromHref(node), node)
@@ -194,7 +198,7 @@ class PixivPageAdapter extends IllustPageAdapter {
     }
 
     getIdFromHref(obj) {
-        return Number(obj.href.match(/illust_id=(\d+)/)[1])
+        return Number(obj.href.match(/artworks\/(\d+)/)[1])
     }
 
     createButton(text, id, handler) {
