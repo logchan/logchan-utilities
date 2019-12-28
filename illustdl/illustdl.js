@@ -175,7 +175,7 @@ class IllustDownloader {
             return
         }
         adapter.log(this.createFilename(info, info.numberOfPages, ''))
-        adapter.log(`Description length: ${info.description.length}`)
+        adapter.log(`Tags: ${info.tags.length}, description: ${info.description.length}`)
 
         this.isDownloading = true
         adapter.downloading()

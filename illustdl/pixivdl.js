@@ -141,7 +141,7 @@ class PixivPageAdapter extends IllustPageAdapter {
             pages = pageIndMatch[1]
         }
     
-        let tagList = Array.from(document.querySelectorAll('figcaption footer a[href^="/search.php"]'))
+        let tagList = Array.from(document.querySelectorAll('figcaption footer a[href^="/tags"]'))
         let tags = []
         tagList.forEach(tag => {
             tags.push(tag.innerText)
