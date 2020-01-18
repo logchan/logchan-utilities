@@ -47,6 +47,7 @@
 	],
 	"background": {
 		"scripts": [
+			"utils/downloader.js",
 			"logchanutil_background.js",
 			"illustdl/illustdl_background.js"
 		]

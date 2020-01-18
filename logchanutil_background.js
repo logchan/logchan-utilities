@@ -17,7 +17,7 @@ function gotoPixivAuthorOnClick(info, tab) {
 
 function getPixivDlList() {
 	chrome.storage.local.get('pixivDlList', obj => {
-		console.log(obj.pixivDlList)
+		downloader.triggerString(JSON.stringify(obj['pixivDlList']), 'pixiv-dl.txt')
 	})
 }
 
@@ -29,7 +29,7 @@ function setPixivDlList(list) {
 
 function getTwitterDlList() {
 	chrome.storage.local.get('twitterDlList', obj => {
-		console.log(obj.twitterDlList)
+		downloader.triggerString(JSON.stringify(obj['twitterDlList']), 'twitter-dl.txt')
 	})
 }
 
