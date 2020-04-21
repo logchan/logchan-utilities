@@ -66,7 +66,7 @@ class PixivPageAdapter extends IllustPageAdapter {
     }
 
     isIllustPage(url = window.location.href) {
-        return url.indexOf('/artworks/') >= 0
+        return url.indexOf('//www.pixiv.net/artworks/') >= 0
     }
 
     getIllustId() {
@@ -248,6 +248,10 @@ class PixivPageAdapter extends IllustPageAdapter {
 
     nodeAttributeChanged(node, record) {
         if (record.attributeName !== 'class') {
+            return
+        }
+
+        if (!record.oldValue) {
             return
         }
 
