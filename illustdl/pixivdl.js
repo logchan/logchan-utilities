@@ -43,8 +43,20 @@ class PixivPageAdapter extends IllustPageAdapter {
         this.waitForElementAsync(selector).then(container => {
             let box = document.createElement('div')
             box.id = 'pixivDlLog'
-    
+
+            let clearLogBtn = document.createElement('a')
+            clearLogBtn.appendChild(document.createTextNode('Clear'))
+            clearLogBtn.href = "javascript:"
+            clearLogBtn.style.color = "blue"
+            clearLogBtn.addEventListener('click', () => {
+                while (box.children.length > 0) {
+                    box.removeChild(box.children[0])
+                }
+            })
+
+            container.appendChild(clearLogBtn)
             container.appendChild(box)
+
             this.cachedLog.forEach(msg => {
                 this.putMessageToBox(box, msg)
             })
@@ -148,22 +160,22 @@ class PixivPageAdapter extends IllustPageAdapter {
         })
 
         let descElem = document.querySelector('figcaption>div>div p')
-        let desc = descElem ? descElem.innerHTML : 0
+        let desc = descElem ? descElem.innerHTML : ""
 
-        let info = new IllustInfo(url, id, name, authorId, author, pages, tags, desc)
-        info.isAnimated = document.querySelector('canvas') !== null
-        return info
+        const isAnimated = document.querySelector('canvas') !== null
+        return new IllustInfo(url, id, name, authorId, author, Number(pages), tags, desc, isAnimated)
     }
 
     getIllustDownloadsAsync(info) {
         if (info.isAnimated) {
             return new Promise(resolve => {
                 let req = new XMLHttpRequest()
-                req.open('GET', 'https://www.pixiv.net/ajax/illust/' + info.id + '/ugoira_meta')
+                req.open('GET', 'https://www.pixiv.net/ajax/illust/' + info.siteId + '/ugoira_meta')
                 req.responseType = 'json'
                 req.onload = function() {
                     var meta = req.response.body
-                    info.meta = meta
+                    info.frames = meta.frames
+                    info.mimeType = meta.mime_type
                     resolve([[new DownloadInfo(meta.originalSrc, 'zip')]])
                 }
                 req.send()
@@ -174,19 +186,12 @@ class PixivPageAdapter extends IllustPageAdapter {
         url = url.replace(/c\/\d+x\d+_\d+\//g, "").replace("img-master", "img-original").replace("_master1200", "")
         return new Promise(resolve => {
             let result = []
-            for (let page = 0; page < info.numberOfPages; ++page) {
+            for (let page = 0; page < info.count; ++page) {
                 let pageUrl = url.replace('p0', 'p' + page)
                 result.push([new DownloadInfo(pageUrl, 'jpg'), new DownloadInfo(pageUrl.replace('.jpg', '.png'), 'png')])
             }
             resolve(result)
         })
-    }
-
-    appendInfoFile(info, txt) {
-        if (info.isAnimated) {
-            txt.push('Frames:' + JSON.stringify(info.meta.frames))
-			txt.push('MIME type: ' + info.meta.mime_type)
-        }
     }
 
     downloading() {

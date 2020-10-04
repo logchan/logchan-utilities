@@ -97,5 +97,6 @@ class TwitterPageAdapter extends IllustPageAdapter {
     }
 }
 
-let twitterIllustDownloader = new IllustDownloader(new TwitterPageAdapter())
-twitterIllustDownloader.init()
+// TODO TwitterDL is not actively developed and maintained at the moment
+//let twitterIllustDownloader = new IllustDownloader(new TwitterPageAdapter())
+//twitterIllustDownloader.init()

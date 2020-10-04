@@ -4,15 +4,18 @@ contentTypeExtensions = {
 }
 
 class IllustInfo {
-    constructor(url, id, name, authorId, author, numberOfPages, tags, description) {
+    constructor(url, id, name, authorId, author, count, tags, description, isAnimated) {
         this.url = url
-        this.id = id
+        this.siteId = id
         this.name = name
         this.authorId = authorId
         this.author = author
-        this.numberOfPages = numberOfPages
+        this.count = count
         this.tags = tags
         this.description = description
+        this.isAnimated = isAnimated
+        this.frames = []
+        this.mimeType = ""
     }
 }
 
@@ -57,8 +60,6 @@ class IllustPageAdapter {
      * list[i] is all candidates of page i
      */
     getIllustDownloadsAsync(info) { return [] }
-
-    appendInfoFile(info, txt) { }
 
     downloading() { }
 
@@ -174,7 +175,7 @@ class IllustDownloader {
         if (info === null) {
             return
         }
-        adapter.log(this.createFilename(info, info.numberOfPages, ''))
+        adapter.log(this.createFilename(info, info.count, ''))
         adapter.log(`Tags: ${info.tags.length}, description: ${info.description.length}`)
 
         this.isDownloading = true
@@ -186,7 +187,7 @@ class IllustDownloader {
 
     downloadOneInIllust(info, list, page, candidateIndex) {
         let dlInfo = list[page][candidateIndex]
-        this.adapter.log(`[${page+1}/${info.numberOfPages}][${candidateIndex}] ${dlInfo.url}`)
+        this.adapter.log(`[${page+1}/${info.count}][${candidateIndex}] ${dlInfo.url}`)
 
         new Promise((resolve, reject) => {
             let req = new XMLHttpRequest()
@@ -226,29 +227,24 @@ class IllustDownloader {
     }
 
     downloadInfoTxt(info) {
-        let txt = ['URL: ' + info.url]
-        txt.push('Illust Id: ' + info.id)
-        txt.push('Name: ' + info.name)
-        txt.push('Author Id: ' + info.authorId)
-        txt.push('Author: ' + info.author)
-        txt.push('Description: ' + info.description)
-        txt.push('Tags: ' + info.tags.join(', '))
-        this.adapter.appendInfoFile(info, txt)
-        downloader.triggerString(txt.join('\r\n'), this.createFilename(info, 'Info', 'txt'), () => {
+        const copy = { ...info }
+        copy.siteId = copy.siteId.toString()
+        copy.authorId = copy.authorId.toString()
+        const json = JSON.stringify(copy)
+        downloader.triggerString(json, this.createFilename(info, 'info', 'json'), () => {
             this.adapter.log('Downloaded info file')
             this.finishDownload(info)
         })
     }
 
     finishDownload(info) {
-        this.adapter.addIllustDownloaded(info.id)
+        this.adapter.addIllustDownloaded(info.siteId)
         this.adapter.downloaded()
         this.isDownloading = false
     }
 
     createFilename(info, page, ext) {
-        // filename: id [name] - authorId [author] [page].ext
-        // return info.id + ' [' + info.name + '] - ' + info.authorId + ' [' + info.author + '] [' + page + '].' + ext
-        return `${info.id} [${info.name}] - ${info.authorId} [${info.author}] [${page}].${ext}`
+        // filename: id [page].[ext]
+        return `${info.siteId} [${page}].${ext}`
     }
 }
