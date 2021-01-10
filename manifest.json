@@ -60,6 +60,7 @@
 	"permissions": [
 		"contextMenus",
 		"storage",
-		"history"
+		"history",
+		"downloads"
 	]
 }
