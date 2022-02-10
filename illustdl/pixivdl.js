@@ -196,10 +196,16 @@ class PixivPageAdapter extends IllustPageAdapter {
 
     downloading() {
         document.getElementById('pixivDlBtn').innerHTML = 'Downloading'
+        if (!document.title.startsWith("[...]")) {
+            document.title = "[...]" + document.title
+        }
     }
 
     downloaded() {
         document.getElementById('pixivDlBtn').innerHTML = 'Downloaded'
+        if (!document.title.startsWith("[√]")) {
+            document.title = "[√]" + document.title.replace("[...]", "")
+        }
     }
 
     getIdFromHref(obj) {
