@@ -52,6 +52,15 @@
 			"illustdl/illustdl_background.js"
 		]
 	},
+	"declarative_net_request": {
+    "rule_resources": [
+      {
+        "id": "pximg-origin",
+        "enabled": true,
+        "path": "pximg-origin.json"
+      }
+    ]
+  },
 	"options_ui": {
 		"chrome_style": true,
 		"page": "options/options.html",
@@ -61,6 +70,9 @@
 		"contextMenus",
 		"storage",
 		"history",
-		"downloads"
+		"downloads",
+		"*://www.pixiv.net/*",
+		"*://i.pximg.net/*",
+    "declarativeNetRequest"
 	]
 }

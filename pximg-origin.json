@@ -1,0 +1,24 @@
+[
+  {
+    "id": 1,
+    "priority": 1,
+    "action": {
+      "type": "modifyHeaders",
+      "responseHeaders": [
+        {
+          "operation": "set",
+          "header": "Access-Control-Allow-Origin",
+          "value": "*"
+        }
+      ]
+    },
+    "condition": {
+      "initiatorDomains": [
+        "www.pixiv.net"
+      ],
+      "requestDomains": [
+        "i.pximg.net"
+      ]
+    }
+  }
+]
