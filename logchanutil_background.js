@@ -8,11 +8,11 @@ function gotoIdUrlOnClick(info, tab, prefix) {
 }
 
 function gotoPixivOnClick(info, tab) {
-	gotoIdUrlOnClick(info, tab, "https://www.pixiv.net/member_illust.php?mode=medium&illust_id=")
+	gotoIdUrlOnClick(info, tab, "https://www.pixiv.net/artworks/")
 }
 
 function gotoPixivAuthorOnClick(info, tab) {
-	gotoIdUrlOnClick(info, tab, "https://www.pixiv.net/member.php?id=")
+	gotoIdUrlOnClick(info, tab, "https://www.pixiv.net/users/")
 }
 
 function getPixivDlList() {
