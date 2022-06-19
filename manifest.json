@@ -53,19 +53,19 @@
 		]
 	},
 	"declarative_net_request": {
-    "rule_resources": [
-      {
-        "id": "pximg-origin",
-        "enabled": true,
-        "path": "pximg-origin.json"
-      }
-    ]
-  },
+		"rule_resources": [
+			{
+				"id": "pximg-origin",
+				"enabled": true,
+				"path": "pximg-origin.json"
+			}
+		]
+	},
 	"permissions": [
 		"contextMenus",
 		"storage",
 		"*://www.pixiv.net/*",
 		"*://i.pximg.net/*",
-    "declarativeNetRequest"
+		"declarativeNetRequest"
 	]
 }
