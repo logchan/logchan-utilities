@@ -17,11 +17,13 @@ function gotoPixivAuthorOnClick(info, tab) {
 
 function getPixivDlList() {
 	chrome.storage.local.get('pixivDlList', obj => {
-		downloader.triggerString(JSON.stringify(obj['pixivDlList']), 'pixiv-dl.txt')
+		downloader.triggerString(JSON.stringify(obj['pixivDlList']), 'pixiv-dl.json')
 	})
 }
 
-function setPixivDlList(list) {
+async function setPixivDlList() {
+  const resp = await fetch("http://localhost:8000/pixiv-dl.json");
+  const list = await resp.json();
 	chrome.storage.local.set({'pixivDlList' : list}, () => {
 		console.log('Success: list saved')
 	})
