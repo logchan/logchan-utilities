@@ -164,11 +164,31 @@ class IllustDownloader {
 
   injectDlBtn() {
     if (this.adapter.getIllustId() !== null) {
-      this.adapter.injectDlBtn(this.doDownload.bind(this));
+      this.adapter.injectDlBtn(() => this.doDownload());
     }
   }
 
-  doDownload() {
+  async downloadFile(url, ext) {
+    return new Promise((resolve, reject) => {
+      let req = new XMLHttpRequest();
+      req.open("GET", url, true);
+      req.responseType = "blob";
+      req.onload = () => {
+        if (req.status !== 200) {
+          reject(`request status is ${req.status}`);
+        }
+
+        if (ext === null) {
+          ext = contentTypeExtensions[req.getResponseHeader("Content-Type")] || reject("ext cannot be determined");
+        }
+
+        resolve([req.response, ext]);
+      }
+      req.send();
+    });
+  }
+
+  async doDownload() {
     let adapter = this.adapter;
 
     let info = adapter.getIllustInfo();
@@ -176,54 +196,39 @@ class IllustDownloader {
       return;
     }
     adapter.log(this.createFilename(info, info.count, ""));
-    adapter.log(`Tags: ${info.tags.length}, description: ${info.description.length}`);
+    adapter.log(`Tags: ${info.tags}`);
+    adapter.log(`Description: ${info.description.length}`);
 
     this.isDownloading = true;
     adapter.downloading();
-    adapter.getIllustDownloadsAsync(info).then(list => {
-      this.downloadOneInIllust(info, list, 0, 0);
-    });
-  }
 
-  downloadOneInIllust(info, list, page, candidateIndex) {
-    let dlInfo = list[page][candidateIndex];
-    this.adapter.log(`[${page + 1}/${info.count}][${candidateIndex}] ${dlInfo.url}`);
+    const list = await adapter.getIllustDownloadsAsync(info);
+    for (let page = 0; page < list.length; ++page) {
+      let success = false;
+      const candidates = list[page];
+      for (let candidateIdx = 0; candidateIdx < candidates.length; ++candidateIdx) {
+        const candidate = candidates[candidateIdx];
 
-    new Promise((resolve, reject) => {
-      let req = new XMLHttpRequest();
-      req.open("GET", dlInfo.url, true);
-      req.responseType = "blob";
+        this.adapter.log(`[${page + 1}/${info.count}] (${candidateIdx + 1}/${candidates.length}) ${candidate.url}`);
+        try {
+          const [resp, ext] = await this.downloadFile(candidate.url, candidate.ext);
+          downloader.trigger(resp, this.createFilename(info, page, ext));
 
-      req.onload = () => {
-        if (req.response.size > 1024) {
-          if (dlInfo.ext === null) {
-            dlInfo.ext = contentTypeExtensions[req.getResponseHeader("Content-Type")] || reject();
-          }
-
-          let filename = this.createFilename(info, page, dlInfo.ext);
-          downloader.trigger(req.response, filename);
-          resolve();
+          success = true;
+          break;
         }
-        else {
-          reject();
+        catch (ex) {
+          console.error(ex);
         }
-      };
-      req.send();
-    }).then(() => {
-      if (page < list.length - 1) {
-        this.downloadOneInIllust(info, list, page + 1, 0);
       }
-      else {
-        this.downloadInfoTxt(info);
+
+      if (!success) {
+        this.adapter.log("Downloads of all candidates have failed!");
+        break;
       }
-    }, () => {
-      if (candidateIndex < list[page].length - 1) {
-        this.downloadOneInIllust(info, list, page, candidateIndex + 1);
-      }
-      else {
-        this.adapter.log(`Download failed at page ${page}`);
-      }
-    });
+    }
+
+    this.downloadInfoTxt(info);
   }
 
   downloadInfoTxt(info) {
