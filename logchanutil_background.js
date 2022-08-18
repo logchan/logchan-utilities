@@ -89,5 +89,3 @@ chrome.contextMenus.create({
     });
   }
 });
-
-chrome.declarativeNetRequest.onRuleMatchedDebug.addListener((info) => console.log(info));

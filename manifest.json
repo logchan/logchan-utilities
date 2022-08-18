@@ -72,7 +72,6 @@
 		"*://www.pixiv.net/*",
 		"*://i.pximg.net/*",
     "*://link.zhihu.com/*",
-		"declarativeNetRequest",
-    "declarativeNetRequestFeedback"
+		"declarativeNetRequest"
 	]
 }
