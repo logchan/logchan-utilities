@@ -58,7 +58,12 @@
 				"id": "pximg-origin",
 				"enabled": true,
 				"path": "pximg-origin.json"
-			}
+			},
+      {
+        "id": "zhihu-link",
+        "enabled": true,
+        "path": "zhihu-link.json"
+      }
 		]
 	},
 	"permissions": [
@@ -66,6 +71,8 @@
 		"storage",
 		"*://www.pixiv.net/*",
 		"*://i.pximg.net/*",
-		"declarativeNetRequest"
+    "*://link.zhihu.com/*",
+		"declarativeNetRequest",
+    "declarativeNetRequestFeedback"
 	]
 }
