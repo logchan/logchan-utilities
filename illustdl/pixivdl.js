@@ -182,15 +182,16 @@ class PixivPageAdapter extends IllustPageAdapter {
       });
     }
 
-    let url = document.querySelector("figure div[role=presentation] img").getAttribute("src");
-    url = url.replace(/c\/\d+x\d+_\d+\//g, "").replace("img-master", "img-original").replace("_master1200", "");
+    const img = document.querySelector("figure div[role=presentation] img");
+    const parent = img.parentElement;
+    if (parent.tagName !== "A") {
+      this.log("presentation img parent is not link, abort");
+    }
+
+    const originalUrl = parent.href;
+    const format = originalUrl.endsWith(".jpg") ? "jpg" : "png";
     return new Promise(resolve => {
-      let result = [];
-      for (let page = 0; page < info.count; ++page) {
-        let pageUrl = url.replace("p0", "p" + page);
-        result.push([new DownloadInfo(pageUrl, "jpg"), new DownloadInfo(pageUrl.replace(".jpg", ".png"), "png")]);
-      }
-      resolve(result);
+      resolve([...Array(info.count).keys()].map(idx => [new DownloadInfo(originalUrl.replace("p0", `p${idx}`), format)]));
     });
   }
 
